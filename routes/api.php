@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use CloudCreativity\LaravelJsonApi\Facades\JsonApi;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,12 +14,17 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('register', 'RegisterController@login');
 
-Route::group([
-    'prefix' => 'auth',
-], function () {
-    Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
-    Route::post('me', 'AuthController@me');
-});
+Route::group(['middleware' => 'api'], function () {
+    JsonApi::register('default')->withNamespace('Admin')->singularControllers()->routes(function ($api) {
+        $api->resource('tests')->controller();
+    });
+    JsonApi::register('default')->routes(function ($api) {
+        Route::post('login', 'AuthController@login');
+        Route::post('logout', 'AuthController@logout');
+        Route::post('refresh', 'AuthController@refresh');
+        Route::post('me', 'AuthController@me');
+        Route::get('users', 'AuthController@users');
+    });
+  });

@@ -2,11 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+
 class AuthController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('jwt', ['except' => ['login']]);
+        $this->middleware('auth:api', ['except' => ['login']]);
+    }
+
+    public function users()
+    {
+        $users = User::all();
+        return response()->json($users);
     }
 
     /**
